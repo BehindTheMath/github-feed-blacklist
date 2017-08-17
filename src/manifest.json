@@ -9,7 +9,7 @@
   },
   "background": {
     "scripts": [
-      "scripts/background.js"
+      "js/background.js"
     ]
   },
   "permissions": [
@@ -24,10 +24,10 @@
         "https://github.com/*"
       ],
       "js": [
-        "scripts/contentscript.js"
+        "js/contentscript.js"
       ],
       "css": [
-        "styles/contentscript.css"
+        "css/contentscript.css"
       ],
       "all_frames": false
     }
