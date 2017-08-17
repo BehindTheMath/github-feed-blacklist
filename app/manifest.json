@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "github-feed-blacklist",
-  "version": "1.0.5",
-  "description": "Helps you keep your github feed clean by filtering out the noisy things!",
+  "name": "Github Feed Blacklist",
+  "version": "2.0.0",
+  "description": "Helps you keep your Github feed clean by filtering out the noisy things!",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"
@@ -38,7 +38,7 @@
       "19": "images/icon-19.png",
       "38": "images/icon-38.png"
     },
-    "default_title": "github-feed-blacklist",
+    "default_title": "Github Feed Blacklist",
     "default_popup": "popup.html"
   },
   "homepage_url": "https://github.com/BehindTheMath/github-feed-blacklist",
