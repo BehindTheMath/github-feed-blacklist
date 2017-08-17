@@ -1,19 +1,33 @@
-# github-feed-blacklist
+# Github Feed Blacklist
 
-**github-feed-blacklist** is a Chrome extension to filter GitHub's homepage feed.
+**Github Feed Blacklist** is a Chrome extension to filter GitHub's homepage feed.
 
-Get [github-feed-blacklist](https://chrome.google.com/webstore/detail/dbhboodpldcdeolligbmnhnjpkkolcnl/) from the Google Chrome Webstore!
+Get [Github Feed Blacklist](https://chrome.google.com/webstore/detail/jdkhepkbillldijjgkhacflljaancmof/) from the Google Chrome Webstore!
 
-### Disclaimer
+### Credits
 
-- I didn't want to handle the setup and boilerplate so I took the first thing I found and used it. It's a yeoman generator, it works nicely but all dependencies are outdated.
-- PR most welcome! Don't be afraid :)
+[Victor Felder](https://github.com/vhf/github-feed-blacklist) - Almost all of the code is from his original extension. I just fixed a small bug, and removed a lot of tooling to simplify it.
 
-### What does it do
+### License
 
-- It adds an icon next to the other extensions' icons.
-- Clicking it lets you add the names of the repo you'd like to filter..
+MIT License
 
-### Next steps
+Copyright (c) 2017 Behind The Math
 
-- Any ideas? Open an issue!
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
