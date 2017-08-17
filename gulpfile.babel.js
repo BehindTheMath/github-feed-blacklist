@@ -10,7 +10,7 @@ const $ = gulpLoadPlugins();
 gulp.task('extras', () => {
   return gulp.src([
     'app/*.*',
-    '!app/scripts.babel',
+    '!app/scripts',
     '!app/*.json',
     '!app/*.html',
   ], {
@@ -27,7 +27,7 @@ function lint(files, options) {
   };
 }
 
-gulp.task('lint', lint('app/scripts.babel/**/*.js', {
+gulp.task('lint', lint('app/scripts/**/*.js', {
   env: {
     es6: true
   }
@@ -82,17 +82,9 @@ gulp.task('chromeManifest', () => {
   .pipe(gulp.dest('dist'));
 });
 
-gulp.task('babel', () => {
-  return gulp.src('app/scripts.babel/**/*.js')
-      .pipe($.babel({
-        presets: ['es2015']
-      }))
-      .pipe(gulp.dest('app/scripts'));
-});
-
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
-gulp.task('watch', ['lint', 'babel', 'html'], () => {
+gulp.task('watch', ['lint', 'html'], () => {
   $.livereload.listen();
 
   gulp.watch([
@@ -102,7 +94,7 @@ gulp.task('watch', ['lint', 'babel', 'html'], () => {
     'app/styles/**/*',
   ]).on('change', $.livereload.reload);
 
-  gulp.watch('app/scripts.babel/**/*.js', ['lint', 'babel']);
+  gulp.watch('app/scripts/**/*.js', 'lint');
   gulp.watch('bower.json', ['wiredep']);
 });
 
@@ -127,7 +119,7 @@ gulp.task('package', function () {
 
 gulp.task('build', (cb) => {
   runSequence(
-    'lint', 'babel', 'chromeManifest',
+    'lint', 'chromeManifest',
     ['html', 'images', 'extras'],
     'size', cb);
 });

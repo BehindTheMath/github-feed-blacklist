@@ -41,5 +41,6 @@
     "default_title": "github-feed-blacklist",
     "default_popup": "popup.html"
   },
-  "homepage_url": "https://github.com/vhf/github-feed-blacklist"
+  "homepage_url": "https://github.com/BehindTheMath/github-feed-blacklist",
+  "minimum_chrome_version": "58"
 }
