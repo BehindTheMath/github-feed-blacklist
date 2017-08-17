@@ -15,8 +15,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
         if (request.update) {
             chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
-                chrome.tabs.sendMessage(tabs[0].id, {update: true}, () => {
-                });
+                chrome.tabs.sendMessage(tabs[0].id, {update: true});
             });
         }
     }
