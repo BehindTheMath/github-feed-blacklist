@@ -4,7 +4,11 @@
     "node": ">=0.8.0"
   },
   "name": "GithubFeedBlacklist",
+  "scripts": {
+    "zip": "node scripts/zip.js"
+  },
   "devDependencies": {
+    "zip-folder": "^1.0.0"
   },
   "eslintConfig": {
     "env": {
