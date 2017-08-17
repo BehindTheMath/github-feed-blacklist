@@ -1,0 +1,23 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-namespace": false,
+    "no-console": false,
+    "object-literal-sort-keys": false,
+    "array-type": false,
+    "one-variable-per-declaration": false,
+    "trailing-comma": false,
+    "max-line-length": false,
+    "arrow-parens": false,
+    "object-literal-shorthand": false,
+    "curly": [true, "ignore-same-line"],
+    "object-literal-key-quotes": [true, "as-needed"],
+    "comment-format": {
+      "severity": "warning"
+    }
+  }
+}
