@@ -5,7 +5,8 @@
     "sourceMap": true,
     "outDir": "./src/js/",
     "noImplicitReturns": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "include": [
     "./src/ts/*.ts"

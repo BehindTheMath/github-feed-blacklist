@@ -1,148 +1,108 @@
 "use strict";
 
 namespace popup {
-    const triggers: Array<Trigger> = [
-        {
-            className: "star",
-            name: "star",
-        },
-        {
-            className: "fork",
-            name: "fork",
-        },
-        {
-            className: "issue_open",
-            name: "new issue/PR",
-        },
-        {
-            className: "issue_com",
-            name: "issue/PR comment",
-        },
-        {
-            className: "issue_close",
-            name: "closed issue/PR",
-        },
-        {
-            className: "commit",
-            name: "commit",
-        },
-        {
-            className: "wiki",
-            name: "wiki edit",
-        },
-    ];
-
-    document.getElementById("clear").addEventListener("click", () => {
-        localStorage.clear();
-        renderList();
-    });
-
-    const form: HTMLLabelElement = document.getElementById("add") as HTMLLabelElement;
-
-    form.addEventListener("submit", (event): boolean | void => {
-        event.preventDefault();
-        const input: HTMLInputElement = document.getElementById("input") as HTMLInputElement;
-        const repo: string = input.value;
-        input.value = "";
-
-        // If this repo is already in storage, stop.
-        const repos = localStorage.getItem("repos") || {};
-        if (repos.hasOwnProperty(repo)) {
-            return false;
-        }
-
-        triggers.forEach((trigger): void => {
-            localStorage.setItem(`${repo}/${trigger.className}`, "true");
-        });
-        renderList();
-    });
-
     renderList();
 
+    document.getElementById("clear").addEventListener("click", () => {
+        chrome.storage.sync.remove("repos", renderList);
+    });
+
+    document.getElementById("add").addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const input: HTMLInputElement = document.getElementById("input") as HTMLInputElement;
+        const repoName: string = input.value;
+        input.value = "";
+
+        const repos: IRepos = (await getFromSyncStorage("repos")).repos;
+        // If this repo is not yet in storage, continue.
+        if (!repos.hasOwnProperty(repoName)) {
+            repos[repoName] = {
+                star: true,
+                fork: true,
+                issue_open: true,
+                issue_com: true,
+                issue_close: true,
+                commit: true,
+                wiki: true
+            };
+            chrome.storage.sync.set({repos: repos}, renderList);
+        }
+    });
+
     function update(): void {
-        chrome.runtime.sendMessage({update: true});
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            chrome.tabs.sendMessage(tabs[0].id, {update: true});
+        });
     }
 
-    function newEl(repo: string): string {
-        let outputHtml: string = `<li><span title="Delete" class="delete"></span><span class="repo"><span class="repoName">${repo}</span>
+    function newEl(repoName: string, repo: IRepo): string {
+        let outputHtml: string = `<li><span title="Delete" class="delete"></span><span class="repo"><span class="repoName">${repoName}</span>
                     <span class="menu"><ul>`;
 
-        triggers.forEach((trigger): void => {
-            let state: string = `checked="checked"`;
-            if (localStorage.getItem(`${repo}/${trigger.className}`) === "false") {
-                state = "";
-            }
-            outputHtml += `<li><input type="checkbox" ${state} class="${trigger.className} toggle"> ${trigger.name} notifications</li>`;
-        });
+        outputHtml += `<li><input type="checkbox" ${repo.star ? "checked" : ""} class="toggle star">Star notifications</li>`;
+        outputHtml += `<li><input type="checkbox" ${repo.fork ? "checked" : ""} class="toggle fork">Fork notifications</li>`;
+        outputHtml += `<li><input type="checkbox" ${repo.issue_open ? "checked" : ""} class="toggle issue_open">New issue/PR notifications</li>`;
+        outputHtml += `<li><input type="checkbox" ${repo.issue_com ? "checked" : ""} class="toggle issue_com">Issue/PR comment notifications</li>`;
+        outputHtml += `<li><input type="checkbox" ${repo.issue_close ? "checked" : ""} class="toggle issue_close">Closed issue/PR notifications</li>`;
+        outputHtml += `<li><input type="checkbox" ${repo.commit ? "checked" : ""} class="toggle commit">Commit notifications</li>`;
+        outputHtml += `<li><input type="checkbox" ${repo.wiki ? "checked" : ""} class="toggle wiki">Wiki edit notifications</li>`;
+
         return outputHtml + `</ul></span></span></li>`;
     }
 
-    function toggleEvent(event: Event): void {
+    async function toggleEvent(event: Event) {
         const target: HTMLInputElement = event.target as HTMLInputElement;
-        const repo: string = (target.parentElement.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("repoName")[0] as HTMLElement).innerText;
+        const repoName: string = (target.parentElement.parentElement.parentElement.parentElement.parentElement.getElementsByClassName("repoName")[0] as HTMLElement).innerText;
         const classes: DOMTokenList = target.classList;
-        let type = "";
+        const type: string = classes.item(1);
 
-        if (classes.contains("star")) {
-            type = "star";
-        } else if (classes.contains("fork")) {
-            type = "fork";
-        } else if (classes.contains("issue_open")) {
-            type = "issue_open";
-        } else if (classes.contains("issue_com")) {
-            type = "issue_com";
-        } else if (classes.contains("issue_close")) {
-            type = "issue_close";
-        } else if (classes.contains("commit")) {
-            type = "commit";
-        } else if (classes.contains("wiki")) {
-            type = "wiki";
-        }
+        const repos: IRepos = (await getFromSyncStorage("repos")).repos;
+        repos[repoName][type] = target.checked;
+        chrome.storage.sync.set({repos: repos});
 
-        if (!target.checked) {
-            localStorage.setItem(`${repo}/${type}`, "false");
-        } else {
-            localStorage.setItem(`${repo}/${type}`, "true");
-        }
         update();
     }
 
-    function deleteEvent(event: Event): void {
+    async function deleteEvent(event: Event) {
         event.preventDefault();
         const target: HTMLElement = event.target as HTMLElement;
         const repoSpan: HTMLSpanElement = target.parentElement.getElementsByClassName("repo")[0] as HTMLSpanElement;
-        const repo: string = (repoSpan.getElementsByClassName("repoName")[0] as HTMLElement).innerText;
+        const repoName: string = (repoSpan.getElementsByClassName("repoName")[0] as HTMLElement).innerText;
         const li: HTMLLIElement = repoSpan.parentElement as HTMLLIElement;
-        triggers.forEach((trigger): void => {
-            localStorage.removeItem(`${repo}/${trigger.className}`);
-        });
         li.parentNode.removeChild(li);
+
+        const repos: IRepos = (await getFromSyncStorage("repos")).repos;
+        delete repos[repoName];
+        chrome.storage.sync.set({repos: repos});
+
         update();
     }
 
-    function renderList(): void {
+    async function renderList() {
         const list: HTMLElement = document.getElementById("repos");
-        const repos = [];
-        const html = [];
+        //const repos = [];
+        const html: Array<string> = [];
 
-        for (let i = 0; i < localStorage.length; i++) {
-            const repo = localStorage.key(i).split("/").slice(0, 2).join("/");
-            if (repos.indexOf(repo) === -1) {
-                repos.push(repo);
-                html.push(newEl(repo));
-            }
-        }
+        const repos: IRepos = (await getFromSyncStorage("repos")).repos;
+        Object.keys(repos).forEach((repoName: string) => {
+            html.push(newEl(repoName, repos[repoName]));
+        });
+
         list.innerHTML = html.join("");
-        Array.prototype.map.call(document.querySelectorAll(".toggle"), (el: HTMLElement) => {
-                el.removeEventListener("click", toggleEvent);
-                el.addEventListener("click", toggleEvent);
-            }
-        );
-        Array.prototype.map.call(document.querySelectorAll(".delete"), (el: HTMLElement) => {
-                el.removeEventListener("click", deleteEvent);
-                el.addEventListener("click", deleteEvent);
-            }
-        );
+
+        document.querySelectorAll(".toggle").forEach((element: HTMLElement) => {
+            element.addEventListener("click", toggleEvent);
+        });
+        document.querySelectorAll(".delete").forEach((element: HTMLElement) => {
+            element.addEventListener("click", deleteEvent);
+        });
+
         update();
+    }
+
+    function getFromSyncStorage(items: string | Array<string> | object): Promise<ISyncStorageData> {
+        return new Promise<ISyncStorageData>(resolve => {
+            chrome.storage.sync.get(items, resolve);
+        });
     }
 }
