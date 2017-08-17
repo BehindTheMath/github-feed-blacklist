@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "none",
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./src/js/",
+    "noImplicitReturns": true,
+    "noImplicitAny": true
+  },
+  "include": [
+    "./src/ts/*.ts"
+  ]
+}

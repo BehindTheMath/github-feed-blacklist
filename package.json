@@ -4,6 +4,7 @@
     "zip": "node scripts/zip.js"
   },
   "devDependencies": {
+    "@types/chrome": "0.0.47",
     "zip-folder": "^1.0.0"
   },
   "eslintConfig": {

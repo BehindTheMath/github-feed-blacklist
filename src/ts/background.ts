@@ -1,7 +1,6 @@
 'use strict';
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         const repo = request.repo;
         if (repo) {
             sendResponse({

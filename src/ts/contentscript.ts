@@ -3,7 +3,7 @@
 const feedSize = 50;
 
 const loadNextPage = () => {
-    const button = document.querySelector('.news > form > button');
+    const button: HTMLButtonElement = document.querySelector('.news > form > button') as HTMLButtonElement;
     if (button) {
         button.click();
         return true;
@@ -13,16 +13,16 @@ const loadNextPage = () => {
 
 const countUpdate = () => {
     const count = document.getElementById('hideCount');
-    count.textContent = document.getElementsByClassName('ghff-hide').length;
+    count.textContent = document.getElementsByClassName('ghff-hide').length.toString();
 };
 
 const feedCleaning = () => {
-    const lines = document.querySelectorAll('.news > .alert');
-    Array.prototype.forEach.call(lines, (line) => {
-        const classes = line.classList;
-        const repoLine = line.querySelectorAll('.title > a')[1].text;
-        let repo = repoLine;
-        const anchor = repoLine.indexOf('#');
+    const lines: NodeListOf<Element> = document.querySelectorAll('.news > .alert');
+    Array.prototype.forEach.call(lines, (line: HTMLElement) => {
+        const classes: DOMTokenList = line.classList;
+        const repoLine: string = (line.querySelectorAll('.title > a')[1] as HTMLAnchorElement).text;
+        let repo: string = repoLine;
+        const anchor: number = repoLine.indexOf('#');
         if (anchor !== -1) {
             repo = repoLine.slice(0, anchor);
         }
@@ -106,18 +106,18 @@ observer.observe(document.querySelector('.news'), {childList: true});
 const hideCount = document.createElement('label');
 hideCount.classList.add('filter-label');
 hideCount.id = 'hideCount';
-hideCount.textContent = 0;
+hideCount.textContent = "0";
 const insertTarget = document.querySelector('.news .alert');
 insertTarget.parentElement.insertBefore(hideCount, insertTarget);
 
 document.getElementById('hideCount').addEventListener('click', () => {
     const hiddenElt = document.getElementsByClassName('ghff-hide');
     if (hiddenElt.length && hiddenElt[0].classList.contains('ghff-show')) {
-        Array.prototype.forEach.call(hiddenElt, (elt) => {
+        Array.prototype.forEach.call(hiddenElt, (elt: HTMLElement) => {
             elt.classList.remove('ghff-show');
         });
     } else {
-        Array.prototype.forEach.call(hiddenElt, (elt) => {
+        Array.prototype.forEach.call(hiddenElt, (elt: HTMLElement) => {
             elt.classList.add('ghff-show');
         });
     }
