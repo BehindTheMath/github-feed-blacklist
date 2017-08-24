@@ -13,10 +13,12 @@ namespace popup {
         const repoName: string = input.value;
         input.value = "";
 
-        const repos: IRepos = (await getFromSyncStorage("repos")).repos;
+        const dataFromSyncStorage: ISyncStorageData = await getFromSyncStorage("repos");
+
         // If this repo is not yet in storage, continue.
-        if (!repos.hasOwnProperty(repoName)) {
-            repos[repoName] = {
+        dataFromSyncStorage.repos = dataFromSyncStorage.repos || {};
+        if (!dataFromSyncStorage.repos.hasOwnProperty(repoName)) {
+            dataFromSyncStorage.repos[repoName] = {
                 star: true,
                 fork: true,
                 issue_open: true,
@@ -25,7 +27,7 @@ namespace popup {
                 commit: true,
                 wiki: true
             };
-            chrome.storage.sync.set({repos: repos}, renderList);
+            chrome.storage.sync.set({repos: dataFromSyncStorage.repos}, renderList);
         }
     });
 
