@@ -64,64 +64,23 @@ namespace contentScript {
             const anchor: number = repoLine.indexOf("#");
             const repoName: string = anchor === -1 ? repoLine : repoLine.slice(0, anchor);
 
-            if (repos && repos[repoName]) {
+            if (line.parentNode && repos && repos.hasOwnProperty(repoName)) {
                 const repo: IRepo = repos[repoName];
-
-                if (line.parentNode) {
-                    // TODO: refactor the following
-                    if (classes.contains("watch_started")) {
-                        if (repo.star) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                    if (classes.contains("fork")) {
-                        if (repo.fork) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                    if (classes.contains("issues_opened")) {
-                        if (repo.issue_open) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                    if (classes.contains("issues_comment")) {
-                        if (repo.issue_com) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                    if (classes.contains("issues_closed")) {
-                        if (repo.issue_close) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                    if (classes.contains("gollum")) {
-                        if (repo.wiki) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                    if (classes.contains("push")) {
-                        if (repo.commit) {
-                            line.classList.add("ghff-hide");
-                        } else {
-                            line.classList.remove("ghff-hide");
-                        }
-                    }
-                }
+                shouldBeHidden(classes, repo) ? line.classList.add("ghff-hide") : line.classList.remove("ghff-hide");
             }
         });
+
         countUpdate();
+    }
+
+    function shouldBeHidden(classes: DOMTokenList, repo: IRepo): boolean {
+        return (classes.contains("watch_started") && repo.star) ||
+            (classes.contains("fork") && repo.fork) ||
+            (classes.contains("issues_opened") && repo.issue_open) ||
+            (classes.contains("issues_comment") && repo.issue_com) ||
+            (classes.contains("issues_closed") && repo.issue_close) ||
+            (classes.contains("gollum") && repo.wiki) ||
+            (classes.contains("push") && repo.commit);
     }
 
     function getFromSyncStorage(items: string | Array<string> | object): Promise<ISyncStorageData> {
