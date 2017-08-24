@@ -6,7 +6,8 @@
     "outDir": "./src/js/",
     "noImplicitReturns": true,
     "noImplicitAny": true,
-    "suppressImplicitAnyIndexErrors": true
+    "suppressImplicitAnyIndexErrors": true,
+    "removeComments": true
   },
   "include": [
     "./src/ts/*.ts"
