@@ -17,19 +17,18 @@ namespace contentScript {
         count.textContent = document.getElementsByClassName("ghff-hide").length.toString();
     }
 
-    function feedCleaning() {
+    async function feedCleaning() {
+        const repos: IRepos = (await getFromSyncStorage("repos") as ISyncStorageData).repos;
+
         const lines: Array<Element> = Array.from(document.querySelectorAll(".news > .alert"));
         lines.forEach((line: HTMLElement) => {
             const classes: DOMTokenList = line.classList;
             const repoLine: string = (line.querySelectorAll(".title > a")[1] as HTMLAnchorElement).text;
-            let repoName: string = repoLine;
             const anchor: number = repoLine.indexOf("#");
-            if (anchor !== -1) {
-                repoName = repoLine.slice(0, anchor);
-            }
+            const repoName: string = anchor === -1 ? repoLine : repoLine.slice(0, anchor);
 
-            getFromSyncStorage("repos").then((dataFromSyncStorage: ISyncStorageData) => {
-                const repo: IRepo = dataFromSyncStorage.repos[repoName];
+            if (repos && repos[repoName]) {
+                const repo: IRepo = repos[repoName];
 
                 if (line.parentNode) {
                     // TODO: refactor the following
@@ -83,17 +82,18 @@ namespace contentScript {
                         }
                     }
                 }
-
-            });
+            }
         });
         countUpdate();
     }
 
     const observer: MutationObserver = new MutationObserver(() => {
-        feedCleaning();
-        if (document.querySelectorAll(".news > .alert:not(.ghff-hide)").length < feedSize) {
-            loadNextPage();
-        }
+        feedCleaning()
+            .then(() => {
+                if (document.querySelectorAll(".news > .alert:not(.ghff-hide)").length < feedSize) {
+                    loadNextPage();
+                }
+            });
     });
 
     chrome.runtime.onMessage.addListener((request) => {
@@ -124,8 +124,8 @@ namespace contentScript {
         }
     });
 
-    feedCleaning();
-    loadNextPage();
+    feedCleaning()
+        .then(loadNextPage);
 
     function getFromSyncStorage(items: string | Array<string> | object): Promise<ISyncStorageData> {
         return new Promise<ISyncStorageData>(resolve => {
