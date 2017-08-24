@@ -124,9 +124,6 @@ namespace contentScript {
         }
     });
 
-    feedCleaning()
-        .then(loadNextPage);
-
     function getFromSyncStorage(items: string | Array<string> | object): Promise<ISyncStorageData> {
         return new Promise<ISyncStorageData>(resolve => {
             chrome.storage.sync.get(items, resolve);
