@@ -2,21 +2,21 @@
   "manifest_version": 2,
   "name": "Github Feed Blacklist",
   "version": "2.0.0",
-  "description": "Helps you keep your Github feed clean by filtering out the noisy things!",
+  "description": "Helps you keep your Github feed clean by filtering out the noisy things.",
   "icons": {
     "16": "images/icon-16.png",
     "128": "images/icon-128.png"
   },
   "permissions": [
     "storage",
-    "http://github.com/*",
-    "https://github.com/*"
+    "http://github.com/",
+    "https://github.com/"
   ],
   "content_scripts": [
     {
       "matches": [
-        "http://github.com/*",
-        "https://github.com/*"
+        "http://github.com/",
+        "https://github.com/"
       ],
       "js": [
         "js/contentscript.js"

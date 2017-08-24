@@ -6,7 +6,9 @@ Get [Github Feed Blacklist](https://chrome.google.com/webstore/detail/jdkhepkbil
 
 ### Credits
 
-[Victor Felder](https://github.com/vhf/github-feed-blacklist) - Almost all of the code is from his original extension. I just fixed a small bug, and removed a lot of tooling to simplify it.
+[Victor Felder](https://github.com/vhf/github-feed-blacklist) - Most of the core code is from his original extension.
+
+I removed a lot of tooling and refactored a lot to fix a small bug and simplify the code.
 
 ### License
 
