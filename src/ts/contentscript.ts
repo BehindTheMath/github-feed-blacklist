@@ -3,6 +3,43 @@
 namespace contentScript {
     const feedSize = 50;
 
+    const observer: MutationObserver = new MutationObserver(() => {
+        feedCleaning()
+            .then(() => {
+                if (document.querySelectorAll(".news > .alert:not(.ghff-hide)").length < feedSize) {
+                    loadNextPage();
+                }
+            });
+    });
+
+    observer.observe(document.querySelector(".news"), {childList: true});
+
+    chrome.runtime.onMessage.addListener((request) => {
+        if (request.update) {
+            feedCleaning();
+        }
+    });
+
+    const hideCount: HTMLElement = document.createElement("label");
+    hideCount.classList.add("filter-label");
+    hideCount.id = "hideCount";
+    hideCount.textContent = "0";
+    const insertTarget: Element = document.querySelector(".news .alert");
+    insertTarget.parentElement.insertBefore(hideCount, insertTarget);
+
+    document.getElementById("hideCount").addEventListener("click", () => {
+        const hiddenElt: Array<Element> = Array.from(document.getElementsByClassName("ghff-hide"));
+        if (hiddenElt.length && hiddenElt[0].classList.contains("ghff-show")) {
+            hiddenElt.forEach((elt: HTMLElement) => {
+                elt.classList.remove("ghff-show");
+            });
+        } else {
+            hiddenElt.forEach((elt: HTMLElement) => {
+                elt.classList.add("ghff-show");
+            });
+        }
+    });
+
     function loadNextPage() {
         const button: HTMLButtonElement = document.querySelector(".news > form > button") as HTMLButtonElement;
         if (button) {
@@ -86,43 +123,6 @@ namespace contentScript {
         });
         countUpdate();
     }
-
-    const observer: MutationObserver = new MutationObserver(() => {
-        feedCleaning()
-            .then(() => {
-                if (document.querySelectorAll(".news > .alert:not(.ghff-hide)").length < feedSize) {
-                    loadNextPage();
-                }
-            });
-    });
-
-    chrome.runtime.onMessage.addListener((request) => {
-        if (request.update) {
-            feedCleaning();
-        }
-    });
-
-    observer.observe(document.querySelector(".news"), {childList: true});
-
-    const hideCount: HTMLElement = document.createElement("label");
-    hideCount.classList.add("filter-label");
-    hideCount.id = "hideCount";
-    hideCount.textContent = "0";
-    const insertTarget: Element = document.querySelector(".news .alert");
-    insertTarget.parentElement.insertBefore(hideCount, insertTarget);
-
-    document.getElementById("hideCount").addEventListener("click", () => {
-        const hiddenElt: Array<Element> = Array.from(document.getElementsByClassName("ghff-hide"));
-        if (hiddenElt.length && hiddenElt[0].classList.contains("ghff-show")) {
-            hiddenElt.forEach((elt: HTMLElement) => {
-                elt.classList.remove("ghff-show");
-            });
-        } else {
-            hiddenElt.forEach((elt: HTMLElement) => {
-                elt.classList.add("ghff-show");
-            });
-        }
-    });
 
     function getFromSyncStorage(items: string | Array<string> | object): Promise<ISyncStorageData> {
         return new Promise<ISyncStorageData>(resolve => {
