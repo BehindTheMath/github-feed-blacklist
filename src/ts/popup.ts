@@ -1,7 +1,7 @@
 "use strict";
 
 namespace popup {
-    renderList();
+    renderList(false);
 
     document.getElementById("clear").addEventListener("click", () => {
         chrome.storage.sync.remove("repos", renderList);
@@ -78,7 +78,7 @@ namespace popup {
         update();
     }
 
-    async function renderList() {
+    async function renderList(updatePage: boolean = true) {
         const list: HTMLElement = document.getElementById("repos");
         //const repos = [];
         const html: Array<string> = [];
@@ -97,7 +97,7 @@ namespace popup {
             element.addEventListener("click", deleteEvent);
         });
 
-        update();
+        if (updatePage) update();
     }
 
     function getFromSyncStorage(items: string | Array<string> | object): Promise<ISyncStorageData> {
